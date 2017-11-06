@@ -1,5 +1,6 @@
 import datetime
 import urllib
+import time
 from bs4 import BeautifulSoup
 
 from pymongo import MongoClient
@@ -47,6 +48,7 @@ def fetch_detail_loop():
     for article in articles.find():
         if 'fetched' not in article:
             fetch_article_detail(article['url'])
+            time.sleep(1)
             #print 'need to fetch', article['url']
 
 def fetch_list_loop():
@@ -59,7 +61,7 @@ def fetch_list_loop():
         list_url = '/home/sitemaparchive/day_%s.html' % d.strftime('%Y%m%d')
         fetch_article_list(list_url)
         offset += 1
-
+        time.sleep(1)
 
 #DETAIL_PAGE = 'http://www.dailymail.co.uk/'
 #fetch_article_detail('/wires/reuters/article-5037509/Return-Manaforts-money-Democrats-demand-California-Republican.html')
