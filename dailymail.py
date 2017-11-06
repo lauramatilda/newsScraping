@@ -43,20 +43,27 @@ def fetch_article_detail(url):
     article['html'] = unicode(article_body)
     articles.save(article)
 
-#ARCHIVE_PAGE = '/home/sitemaparchive/day_20171101.html'
-#fetch_article_list(ARCHIVE_PAGE)
-
-
 def fetch_detail_loop():
     for article in articles.find():
         if 'fetched' not in article:
             fetch_article_detail(article['url'])
             #print 'need to fetch', article['url']
 
+def fetch_list_loop():
+    datetime_start = datetime.datetime(2016, 1, 1)
+    offset = 0
+    while True:
+        d = datetime_start + datetime.timedelta(offset)
+        if d.year >= 2017:
+            break
+        list_url = '/home/sitemaparchive/day_%s.html' % d.strftime('%Y%m%d')
+        fetch_article_list(list_url)
+        offset += 1
 
 
 #DETAIL_PAGE = 'http://www.dailymail.co.uk/'
 #fetch_article_detail('/wires/reuters/article-5037509/Return-Manaforts-money-Democrats-demand-California-Republican.html')
 
 #fetch_article_list('/home/sitemaparchive/day_20100101.html')
+fetch_list_loop()
 fetch_detail_loop()
