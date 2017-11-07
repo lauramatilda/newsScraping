@@ -2,6 +2,7 @@ import datetime
 import urllib
 import time
 from bs4 import BeautifulSoup
+import json
 
 from pymongo import MongoClient
 
@@ -14,7 +15,7 @@ def fetch_page(url):
     print url
     return urllib.urlopen(url).read()
 
-def fetch_article_list(url):
+def fetch_article_list(url,d):
     html = fetch_page(url)
     soup = BeautifulSoup(html, 'html.parser')
     html_articles = soup.find('ul', class_='archive-articles').find_all('a')
@@ -24,7 +25,8 @@ def fetch_article_list(url):
             article = {
                 'publication': 'daily_mail',
                 'url': html_article['href'],
-                'title': html_article.get_text()
+                'title': html_article.get_text(),
+                'date': d
             }
             articles.insert_one(article)
         else:
@@ -52,14 +54,14 @@ def fetch_detail_loop():
             #print 'need to fetch', article['url']
 
 def fetch_list_loop():
-    datetime_start = datetime.datetime(2016, 1, 1)
+    datetime_start = datetime.datetime(2013, 1, 1)
     offset = 0
     while True:
         d = datetime_start + datetime.timedelta(offset)
         if d.year >= 2017:
             break
         list_url = '/home/sitemaparchive/day_%s.html' % d.strftime('%Y%m%d')
-        fetch_article_list(list_url)
+        fetch_article_list(list_url,d)
         offset += 1
         time.sleep(1)
 
