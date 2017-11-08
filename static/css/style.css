@@ -1,3 +1,29 @@
 body {
   background: white;
+  font-family:monospace;
+  margin:25px 50px;
+}
+
+h1, h2 {
+  padding:10px 0px 0px 0px;
+}
+
+a:link, a:visited, a:active {
+  color: #000;
+  text-decoration:none;
+}
+
+a:hover {
+}
+
+ul li {
+  padding:10px 0px;
+  border-bottom: 2px solid #ccc;
+  list-style: lower-roman;
+  font-size:14px;
+}
+
+li:hover {
+  background-color:#f8f8f8;
+  font-weight:bold;
 }

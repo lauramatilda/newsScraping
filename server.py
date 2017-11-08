@@ -10,7 +10,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    article_list = articles.find({'publication': 'daily_mail'})[:500]
+    article_list = articles.find({
+    'publication':'daily_mail',
+    'url': {"$regex": "^/news/"},
+    "$or": [{"title": {"$regex": ".*immigrant.*"}}, {"title": {"$regex": ".*migrant.*"}}]
+    })[:100]
     return render_template('article_list.html', articles=article_list)
 
 @app.route('/article/<article_id>')
