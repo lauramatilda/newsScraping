@@ -1,7 +1,7 @@
 body {
   background: white;
   font-family:monospace;
-  margin:25px 50px;
+  margin:25px 200px 25px 150px;
 }
 
 h1, h2 {
@@ -26,4 +26,8 @@ ul li {
 li:hover {
   background-color:#f8f8f8;
   font-weight:bold;
+}
+
+.date {
+  color:#999;
 }

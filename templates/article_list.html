@@ -4,7 +4,7 @@
 <p>
   <h2>Daily Mail: titles containing "immigrant" or "migrant" </h2>
   <ul> {% for article in articles %}
-    <li><a href="/article/{{ article._id }}">{{ article.title }}</a></li>
+    <li><a href="/article/{{ article._id }}">{{ article.title }}</a><br/><span class="date">{{ article.date }}</span></li>
     {% endfor %}
   </ul>
 </p>

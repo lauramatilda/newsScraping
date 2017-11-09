@@ -1,9 +1,10 @@
 import datetime
 import urllib
+from urllib.request import urlopen, Request
 import time
 from bs4 import BeautifulSoup
 import json
-
+from newspaper import Article
 from pymongo import MongoClient
 
 client = MongoClient('localhost', 27017)
@@ -12,8 +13,10 @@ articles = db.articles
 
 def fetch_page(url):
     url = 'http://www.dailymail.co.uk' + url
-    print url
-    return urllib.urlopen(url).read()
+    print(url)
+    # return urllib.urlopen(url).read()
+    # return urlopen(url)
+    return urlopen(Request(url, headers={'User-Agent': 'AppleWebKit/537.36 (KHTML, like Gecko)'}))
 
 def fetch_article_list(url,d):
     html = fetch_page(url)
@@ -24,26 +27,26 @@ def fetch_article_list(url,d):
         if a is None:
             article = {
                 'publication': 'daily_mail',
+                'method': 'n3k',
                 'url': html_article['href'],
-                'title': html_article.get_text(),
-                'date': d
+                'date': d,
+                'title': html_article.get_text()
             }
             articles.insert_one(article)
         else:
-            print 'already there', html_article['href']
+            print('already there', html_article['href'])
 
 def fetch_article_detail(url):
-    html = fetch_page(url)
-    soup = BeautifulSoup(html, 'html.parser')
-    article_body = soup.find('div', itemprop='articleBody')
-    text = ''
-    html_paras = article_body.find_all('p')
-    for html_para in html_paras:
-        text += html_para.get_text() + '\n'
-    article = articles.find_one({'url': url})
+    article = Article(url)
+    article.download()
+    article.parse()
+    article.nlp()
     article['fetched'] = datetime.datetime.utcnow()
-    article['text'] = text.strip()
-    article['html'] = unicode(article_body)
+    article['pubdate'] = article.publish_date
+    article['text'] = article.text
+    article['img'] = article.textarticle.top_image
+    article['keywords'] = article.keywords
+    article['html'] = article.html
     articles.save(article)
 
 def fetch_detail_loop():
@@ -54,11 +57,11 @@ def fetch_detail_loop():
             #print 'need to fetch', article['url']
 
 def fetch_list_loop():
-    datetime_start = datetime.datetime(2014, 8, 16)
+    datetime_start = datetime.datetime(2015, 12, 1)
     offset = 0
     while True:
         d = datetime_start + datetime.timedelta(offset)
-        if d.year >= 2017:
+        if d.day >= 2:
             break
         list_url = '/home/sitemaparchive/day_%s.html' % d.strftime('%Y%m%d')
         fetch_article_list(list_url,d)
@@ -69,5 +72,5 @@ def fetch_list_loop():
 #fetch_article_detail('/wires/reuters/article-5037509/Return-Manaforts-money-Democrats-demand-California-Republican.html')
 
 #fetch_article_list('/home/sitemaparchive/day_20100101.html')
-fetch_list_loop()
+# fetch_list_loop()
 fetch_detail_loop()
