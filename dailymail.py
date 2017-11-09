@@ -21,16 +21,20 @@ def fetch_article_list(url,d):
     html_articles = soup.find('ul', class_='archive-articles').find_all('a')
     for html_article in html_articles:
         a = articles.find_one({'url': html_article['href']})
-        if a is None:
-            article = {
-                'publication': 'daily_mail',
-                'url': html_article['href'],
-                'title': html_article.get_text(),
-                'date': d
-            }
-            articles.insert_one(article)
+        if (('/news/' in html_article['href']) or ('/wires/' in html_article['href']) or ('/money/' in html_article['href'])):
+            if (a is None):
+                article = {
+                    'publication': 'daily_mail',
+                    'url': html_article['href'],
+                    'title': html_article.get_text(),
+                    'date': d
+                }
+                print 'indexed ', article['url']
+                articles.insert_one(article)
+            else:
+                print 'already there', html_article['href']
         else:
-            print 'already there', html_article['href']
+            print 'not relevant article', html_article['href']
 
 def fetch_article_detail(url):
     html = fetch_page(url)
@@ -54,7 +58,7 @@ def fetch_detail_loop():
             #print 'need to fetch', article['url']
 
 def fetch_list_loop():
-    datetime_start = datetime.datetime(2014, 8, 16)
+    datetime_start = datetime.datetime(2014, 8, 23)
     offset = 0
     while True:
         d = datetime_start + datetime.timedelta(offset)
@@ -70,4 +74,4 @@ def fetch_list_loop():
 
 #fetch_article_list('/home/sitemaparchive/day_20100101.html')
 fetch_list_loop()
-fetch_detail_loop()
+# fetch_detail_loop()
