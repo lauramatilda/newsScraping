@@ -3,7 +3,9 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
 
-client = MongoClient('localhost', 27017)
+MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
+
+client = MongoClient(MONGODB_URL) #previously ('localhost', 27017)
 db = client.news
 articles = db.articles
 
