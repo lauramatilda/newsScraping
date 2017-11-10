@@ -30,17 +30,20 @@ def fetch_article_list(url,d):
     html_articles = soup.find('ul', class_='archive-articles').find_all('a')
     for html_article in html_articles:
         a = articles.find_one({'url': html_article['href']})
-        if a is None and '/news/' or '/wires/' or '/money/' in html_article['href']: #added piece here... and '/news/' in html_article['href']
-            article = {
-                'publication': 'daily_mail',
-                'method': 'n3k',
-                'url': html_article['href'],
-                'date': d,
-                'title': html_article.get_text()
-            }
-            articles.insert_one(article)
+        if (('/news/' in html_article['href']) or ('/wires/' in html_article['href']) or ('/money/' in html_article['href'])):
+            if a is None:
+                article = {
+                    'publication': 'daily_mail',
+                    'method': 'n3k',
+                    'url': html_article['href'],
+                    'date': d,
+                    'title': html_article.get_text()
+                }
+                articles.insert_one(article)
+            else:
+                print('Already indexed', html_article['href'])
         else:
-            print('Already indexed', html_article['href'])
+            print 'not relevant article', html_article['href']
 
 def fetch_article_detail(url,article):
     url = 'http://www.dailymail.co.uk' + url
