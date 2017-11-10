@@ -18,7 +18,7 @@ def hello():
     'publication':'daily_mail',
     'url': {"$regex": "^/news/"},
     "$or": [{"title": {"$regex": ".*immigrant.*"}}, {"title": {"$regex": ".*migrant.*"}}]
-    })[:500]
+    })[:50]
     return render_template('article_list.html', articles=article_list)
 
 @app.route('/article/<article_id>')

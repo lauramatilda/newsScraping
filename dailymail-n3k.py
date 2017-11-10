@@ -30,8 +30,8 @@ def fetch_page(url):
     url = 'http://www.dailymail.co.uk' + url
     print(url)
     # return urllib.urlopen(url).read()
-    # return urlopen(url)
-    return urlopen(Request(url, headers={USERAGENT}))
+    return urlopen(url)
+    # return urlopen(Request(url, headers={USERAGENT}))
 
 def fetch_article_list(url,d):
     html = fetch_page(url)
@@ -72,7 +72,7 @@ def fetch_article_detail(url,article):
         # article = {}
         article['fetched'] = datetime.datetime.utcnow()
         article['pubdate'] = a.publish_date
-        print("FETCHED: ", a.publish_date, " ", url)
+        print("FETCHED: ", article['date'], " ", url)
         article['text'] = a.text
         article['img'] = a.top_image
         # print(a.top_image)
@@ -104,5 +104,16 @@ def fetch_list_loop():
 #fetch_article_detail('/wires/reuters/article-5037509/Return-Manaforts-money-Democrats-demand-California-Republican.html')
 
 #fetch_article_list('/home/sitemaparchive/day_20100101.html')
-fetch_list_loop()
-fetch_detail_loop()
+
+if __name__=='__main__':
+    import sys
+    if len(sys.argv) < 2:
+        print("Usage: python3 dailymail-n3k.py [list|detail]")
+        sys.exit()
+    cmd = sys.argv[1]
+    if cmd == 'list':
+        fetch_list_loop()
+    elif cmd == 'detail':
+        fetch_detail_loop()
+    else:
+        print("wrong command")
