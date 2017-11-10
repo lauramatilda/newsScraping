@@ -1,7 +1,18 @@
-from flask import Flask, render_template
+import json
+from datetime import datetime
+
+from flask import Flask, render_template, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        elif isinstance(o, datetime):
+            return o.isoformat()
+        return json.JSONEncoder.default(self, o)
 
 MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
 
@@ -42,6 +53,34 @@ def article_list_news():
 def article_detail(article_id):
     article = articles.find_one({'_id': ObjectId(article_id)})
     return render_template('article_detail.html', article=article)
+
+@app.route('/api')
+def api_index():
+    possible_urls = ['/api/fulltext', '/api/keywords']
+    return json.dumps(possible_urls)
+
+@app.route('/api/fulltext')
+def api_fulltext():
+    query = {}
+    publication = request.args.get('publication')
+    if publication is not None:
+        query['publication'] = publication
+    article_list = articles.find(query)[:50]
+    return json.dumps(list(article_list), cls=JSONEncoder)
+
+@app.route('/api/keywords')
+def api_keywords():
+    query = {}
+    publication = request.args.get('publication')
+    if publication is not None:
+        query['publication'] = publication
+    query['keywords'] = {'$exists': 1}
+    article_list = articles.find(query)[:50]
+    keyword_set = set()
+    for article in article_list:
+        keyword_set.update(article['keywords'])
+    return json.dumps(list(keyword_set), cls=JSONEncoder)
+
 
 # @app.route("/")
 # def jsonnify():
