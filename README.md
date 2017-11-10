@@ -40,6 +40,16 @@ To run the Flask server:
     export FLASK_DEBUG=1
     flask run
 
+# Hosting your own MongoDB
+
+* Get a server at DigitalOcean.
+* Create a server according to [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-the-mongodb-one-click-application).
+* ssh login as root to the server with your account details: `ssh root@YOURIPADDRESS`
+* Turn off the firewall using `ufw disable`.
+* Use `nano /etc/mongod.conf` and set bindIp to `0.0.0.0`.
+* Restart MongoDB using `service mongod restart`
+* You can now access the MongoDB service remotely using `mongodb://YOURIP:27017/news`
+
 # Documentation
 
 * [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
