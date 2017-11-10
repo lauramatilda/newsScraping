@@ -6,6 +6,7 @@ import os
 MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
 
 client = MongoClient(MONGODB_URL) #previously ('localhost', 27017)
+mongo_db = client.get_default_database()
 db = client.news
 articles = db.articles
 
