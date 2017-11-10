@@ -95,5 +95,5 @@ def fetch_list_loop():
 #fetch_article_detail('/wires/reuters/article-5037509/Return-Manaforts-money-Democrats-demand-California-Republican.html')
 
 #fetch_article_list('/home/sitemaparchive/day_20100101.html')
-# fetch_list_loop()
+fetch_list_loop()
 fetch_detail_loop()
