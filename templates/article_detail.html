@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
+<header>
 <h2>{{ article.title }}</h2>
+<h3>Fetched: {{ article.fetched }}</h3>
+<h3>Manual date: {{ article.date }}</h3>
+<h3>Published: {{ article.pubdate }}</h3>
+<h3>Image: {{ article.img }}</h3>
+<h3>Keywords: {{ article.keywords|join(', ') }}</h3>
+</header>
+
 <pre>{{ article.text }}</pre>
 {% endblock %}

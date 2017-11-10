@@ -8,6 +8,11 @@ h1, h2 {
   padding:10px 0px 0px 0px;
 }
 
+h3 {
+  font-style: oblique;
+  font-size:12px;
+}
+
 a:link, a:visited, a:active {
   color: #000;
   text-decoration:none;
