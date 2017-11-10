@@ -12,7 +12,10 @@
 
 <div>
 {% autoescape false %}
-    {{ article.text | nl2br | squeeze_breaks }}
+    {% if article.text %}
+        {{ article.text | nl2br | squeeze_breaks }}
+    {% endif %}
+    }
 {% endautoescape %}
 </div>
 {% endblock %}
