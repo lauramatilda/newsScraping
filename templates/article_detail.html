@@ -10,5 +10,9 @@
 <h3>Keywords: {{ article.keywords|join(', ') }}</h3>
 </header>
 
-<pre>{{ article.text }}</pre>
+<div>
+{% autoescape false %}
+    {{ article.text | nl2br | squeeze_breaks }}
+{% endautoescape %}
+</div>
 {% endblock %}

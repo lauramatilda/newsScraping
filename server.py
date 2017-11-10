@@ -48,6 +48,14 @@ def article_detail(article_id):
 #     article_list = articles.find({'publication': 'daily_mail'})
 #     return json.dumps('article_list.json', articles=article_list)
 
+@app.template_filter()
+def nl2br(s):
+    return s.replace('\n', '<br>')
+
+@app.template_filter()
+def squeeze_breaks(s):
+    return s.replace('<br><br>', '<br>')
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
