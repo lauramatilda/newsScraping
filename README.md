@@ -50,6 +50,26 @@ To run the Flask server:
 * Restart MongoDB using `service mongod restart`
 * You can now access the MongoDB service remotely using `mongodb://YOURIP:27017/news`
 
+# Running the scraper on a Linux VPS
+
+
+
+    sudo apt-get install python3-pip
+    sudo apt-get install python3-dev
+    sudo apt-get install python3-virtualenv
+    sudo apt-get install libxml2-dev libxslt-dev
+    sudo apt-get install libjpeg-dev zlib1g-dev libpng12-dev
+
+    git clone https://github.com/lauramatilda/newsScraping.git
+    cd newsScraping
+    virtualenv -p /usr/bin/python3 venv
+    source venv/bin/activate
+    pip3 install -r requirements.txt
+    curl https://raw.githubusercontent.com/codelucas/newspaper/master/download_corpora.py | python3
+
+    python dailymail-n3k.py list
+
+
 # Documentation
 
 * [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
