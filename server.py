@@ -20,6 +20,15 @@ def index():
     })[:50]
     return render_template('article_list.html', articles=article_list)
 
+
+@app.route("/fetched")
+def article_list_fetched():
+    article_list = articles.find(
+    {"fetched": {"$exists": 1}}
+    )[:50]
+    return render_template('article_list.html', title="All fetched", articles=article_list)
+
+
 @app.route("/news")
 def article_list_news():
     article_list = articles.find({
