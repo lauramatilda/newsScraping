@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import os
 
 client = MongoClient('localhost', 27017)
 db = client.news
@@ -26,3 +27,7 @@ def article_detail(article_id):
 # def jsonnify():
 #     article_list = articles.find({'publication': 'daily_mail'})
 #     return json.dumps('article_list.json', articles=article_list)
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
