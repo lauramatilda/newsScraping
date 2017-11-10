@@ -45,3 +45,6 @@ To run the Flask server:
 * [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 * [PyMongo](https://api.mongodb.com/python/current/tutorial.html)
 * [Flask](http://flask.pocoo.org/docs/0.12/)
+* [12-factor app](https://12factor.net/)
+* [Jinja Templating](http://jinja.pocoo.org/docs/2.10/)
+* [Python apps on Heroku](https://devcenter.heroku.com/articles/getting-started-with-python)
