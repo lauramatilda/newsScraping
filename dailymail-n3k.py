@@ -7,9 +7,17 @@ import json
 from newspaper import Config, Article
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
-db = client.news
+# client = MongoClient('localhost', 27017)
+# db = client.news
+# articles = db.articles
+
+MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
+
+client = MongoClient(MONGODB_URL) #previously ('localhost', 27017)
+db = client.get_default_database()
+# db = client.news
 articles = db.articles
+
 USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
 
 config = Config()
