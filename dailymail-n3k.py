@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import json
 from newspaper import Config, Article
 from pymongo import MongoClient
+import os
 
 # client = MongoClient('localhost', 27017)
 # db = client.news
