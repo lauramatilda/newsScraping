@@ -43,7 +43,7 @@ def fetch_article_list(url,d):
             else:
                 print('Already indexed', html_article['href'])
         else:
-            print 'not relevant article', html_article['href']
+            print('not relevant article', html_article['href'])
 
 def fetch_article_detail(url,article):
     url = 'http://www.dailymail.co.uk' + url
