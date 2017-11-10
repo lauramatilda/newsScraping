@@ -13,13 +13,21 @@ articles = db.articles
 app = Flask(__name__)
 
 @app.route("/")
-def hello():
+def index():
+    article_list = articles.find({
+    'publication':'daily_mail',
+    'url': {"$regex": "^/news/"}
+    })[:50]
+    return render_template('article_list.html', articles=article_list)
+
+@app.route("/news")
+def article_list_news():
     article_list = articles.find({
     'publication':'daily_mail',
     'url': {"$regex": "^/news/"},
     "$or": [{"title": {"$regex": ".*immigrant.*"}}, {"title": {"$regex": ".*migrant.*"}}]
     })[:50]
-    return render_template('article_list.html', articles=article_list)
+    return render_template('article_list.html', title="titles containing \"immigrant\" or \"migrant\"", articles=article_list)
 
 @app.route('/article/<article_id>')
 def article_detail(article_id):
