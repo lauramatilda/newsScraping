@@ -89,7 +89,7 @@ def fetch_detail_loop():
             #print 'need to fetch', article['url']
 
 def fetch_list_loop():
-    datetime_start = datetime.datetime(2010, 1, 1)
+    datetime_start = datetime.datetime(2012, 3, 6)
     offset = 0
     while True:
         d = datetime_start + datetime.timedelta(offset)
