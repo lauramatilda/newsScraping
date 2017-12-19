@@ -41,8 +41,10 @@ def article_list_fetched():
 
 @app.route("/stats")
 def article_stats_fetch():
-    article_stats = articles.count()
-    return json.dumps(list(article_stats), cls=JSONEncoder)
+     article_list = articles.find({
+    {"fetched": {"$exists": 1}}
+    })
+    return render_template('stats.html', title="Stats", articles=article_list)
 
 @app.route("/news")
 def article_list_news():
