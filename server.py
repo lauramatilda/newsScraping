@@ -41,7 +41,7 @@ def article_list_fetched():
 
 @app.route("/stats")
 def article_stats_fetch():
-    article_stats = articles.stats()
+    article_stats = articles.count()
     return json.dumps(list(article_stats), cls=JSONEncoder)
 
 @app.route("/news")
