@@ -41,10 +41,10 @@ def article_list_fetched():
 
 @app.route("/stats")
 def article_stats_fetch():
-     article_list = articles.find({
+     article_stats = articles.find({
     {"fetched": {"$exists": 1}}
-    })
-    return render_template('stats.html', title="Stats", articles=article_list)
+    })[:550]
+    return render_template('stats.html', title="Stats", articles=article_stats)
 
 @app.route("/news")
 def article_list_news():
