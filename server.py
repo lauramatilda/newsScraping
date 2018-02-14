@@ -71,8 +71,8 @@ def api_fulltext():
     publication = request.args.get('publication')
     if publication is not None:
         query['publication'] = publication
-    article_list = articles.find(query)[:100]
-    return json.dumps(list(article_list)) #, cls=JSONEncoder
+    article_list = articles.find(query)[:50]
+    return json.dumps(list(article_list), cls=JSONEncoder)
 
 @app.route('/api/keywords')
 def api_keywords():
