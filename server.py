@@ -83,15 +83,19 @@ def api_keywords():
 
 @app.route('/api/wordcount')
     def api_wordcount():
-        # query = {}
-        # publication = request.args.get('publication')
-        # if publication is not None:
-        #     query['publication'] = publication
-        # article_list = articles.find(query)[:100]
-        article_list = articles.find({
-        "$or": [{"title": {"$regex": ".*immigrant.*"}}, {"title": {"$regex": ".*migrant.*"}}]
-        })[:50]
-        return json.dumps('article_list.json', articles=article_list)
+        query = {}
+        publication = request.args.get('publication')
+        if publication is not None:
+            query['publication'] = publication
+        query['text'] = {'$exists': 1}
+        article_list = articles.find(query)[:50]
+        wordcount_set = set()
+        for article in article_list:
+            wordcount_set.update(article['text'])
+        # article_list = articles.find({
+        # "$or": [{"title": {"$regex": ".*immigrant.*"}}, {"title": {"$regex": ".*migrant.*"}}]
+        # })[:50]
+        return json.dumps(list(wordcount_set), cls=JSONEncoder)
 
 
 # @app.route("/")
