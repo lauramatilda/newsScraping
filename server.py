@@ -62,7 +62,7 @@ def article_detail(article_id):
 
 @app.route('/api')
 def api_index():
-    possible_urls = ['/api/fulltext', '/api/keywords', '/api/wordcount']
+    possible_urls = ['/api/fulltext', '/api/keywords', '/api/search?q=<search_term>']
     return json.dumps(possible_urls)
 
 @app.route('/api/fulltext')
@@ -87,31 +87,12 @@ def api_keywords():
         keyword_set.update(article['keywords'])
     return json.dumps(list(keyword_set), cls=JSONEncoder)
 
-@app.route('/api/wordcount')
-    def api_wordcount():
-            query = {}
-            publication = request.args.get('publication')
-            if publication is not None:
-                query['publication'] = publication
-            query['keywords'] = {'$exists': 1}
-            article_list = articles.find(query)[:50]
-            keyword_set = set()
-            for article in article_list:
-                keyword_set.update(article['keywords'])
-        # query = {}
-        # publication = request.args.get('publication')
-        # if publication is not None:
-        #     query['publication'] = publication
-        # query['text'] = {'$exists': 1}
-        # article_list = articles.find(query)[:50]
-        # wordcount_set = set()
-        # for article in article_list:
-        #     wordcount_set.update(article['text'])
-        # article_list = articles.find({
-        # "$or": [{"title": {"$regex": ".*immigrant.*"}}, {"title": {"$regex": ".*migrant.*"}}]
-        # })[:50]
-        return json.dumps(list(keyword_set))
-
+# @app.route('/api/search?q=<search_term>')
+# def api_wordcount(search_term):
+#         #
+#         # something here
+#         #
+#     return json.dumps(list(search_set), cls=JSONEncoder)
 
 # @app.route("/")
 # def jsonnify():
