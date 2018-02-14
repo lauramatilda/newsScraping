@@ -87,12 +87,12 @@ def api_keywords():
         keyword_set.update(article['keywords'])
     return json.dumps(list(keyword_set), cls=JSONEncoder)
 
-# @app.route('/api/search?q=<search_term>')
-# def api_wordcount(search_term):
-#         #
-#         # something here
-#         #
-#     return json.dumps(list(search_set), cls=JSONEncoder)
+@app.route('/api/search?q=<search_term>')
+def api_wordcount(search_term):
+        #
+        # something here
+        #
+    return json.dumps(list(search_set), cls=JSONEncoder)
 
 # @app.route("/")
 # def jsonnify():
