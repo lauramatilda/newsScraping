@@ -62,7 +62,7 @@ def article_detail(article_id):
 
 @app.route('/api')
 def api_index():
-    possible_urls = ['/api/fulltext', '/api/keywords', '/api/search']
+    possible_urls = ['/api/fulltext', '/api/keywords']
     return json.dumps(possible_urls)
 
 @app.route('/api/fulltext')
@@ -72,7 +72,11 @@ def api_fulltext():
     if publication is not None:
         query['publication'] = publication
     article_list = articles.find(query)[:50]
-    return json.dumps(list(article_list), cls=JSONEncoder)
+    return apiResponse(list(article_list)) #json.dumps(list(article_list), cls=JSONEncoder)
+
+def apiResponse(data):
+    headers = [["Access-Control-Allow-Origin", "*"]]
+    return (json.dumps(data, cls=JSONEncoder), 200, headers)
 
 @app.route('/api/keywords')
 def api_keywords():
@@ -85,7 +89,7 @@ def api_keywords():
     keyword_set = set()
     for article in article_list:
         keyword_set.update(article['keywords'])
-    return json.dumps(list(keyword_set), cls=JSONEncoder)
+    return apiResponse(list(keyword_set))
 
 # @app.route('/api/search?q=<search_term>') #?q=<search_term>
 # def api_wordcount(search_term):
