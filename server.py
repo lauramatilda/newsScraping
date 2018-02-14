@@ -62,7 +62,7 @@ def article_detail(article_id):
 
 @app.route('/api')
 def api_index():
-    possible_urls = ['/api/fulltext', '/api/keywords', '/api/search?q=<search_term>']
+    possible_urls = ['/api/fulltext', '/api/keywords', '/api/searchME']
     return json.dumps(possible_urls)
 
 @app.route('/api/fulltext')
