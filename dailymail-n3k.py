@@ -100,11 +100,6 @@ def fetch_list_loop():
         offset += 1
         time.sleep(1)
 
-#DETAIL_PAGE = 'http://www.dailymail.co.uk/'
-#fetch_article_detail('/wires/reuters/article-5037509/Return-Manaforts-money-Democrats-demand-California-Republican.html')
-
-#fetch_article_list('/home/sitemaparchive/day_20100101.html')
-
 if __name__=='__main__':
     import sys
     if len(sys.argv) < 2:

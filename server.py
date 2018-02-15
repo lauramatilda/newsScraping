@@ -15,11 +15,10 @@ class JSONEncoder(json.JSONEncoder):
             return o.isoformat()
         return json.JSONEncoder.default(self, o)
 
-MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news') 
+MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
 
 client = MongoClient(MONGODB_URL) #previously ('localhost', 27017)
-db = client.get_default_database()
-# db = client.news
+db = client.get_default_database() #previously db = client.news
 articles = db.articles
 
 app = Flask(__name__)
@@ -39,13 +38,6 @@ def article_list_fetched():
     {"fetched": {"$exists": 1}}
     )[:50]
     return render_template('article_list.html', title="All fetched", articles=article_list)
-
-#@app.route("/stats")
-#def article_stats_fetch():
-#     article_stats = articles.find({
-#    {"fetched": {"$exists": 1}}
-#    })[:550]
-#    return render_template('stats.html', title="Stats", articles=article_stats)
 
 @app.route("/news")
 def article_list_news():
@@ -82,17 +74,11 @@ def api_query(pubName, year, month):
     article_list = articles.find({
     'publication': pubName,
     'date': {"$gte" : start, "$lt": end}
-    })[:150]
-    return apiResponse(list(article_list))
-
-    #THIS WORKS DON'T BREAK IT
-    # @app.route('/api/test')
-    # def api_query():
-    #     article_list = articles.find({
-    #     'publication':'guardian',
-    #     'date': {"$gte" : datetime(2015, 3, 1), "$lt": datetime(2015, 3, 30)}
-    #     })[:50]
-    #     return apiResponse(list(article_list))
+    })[:700] #Have to limit due to slow server response
+    text_set = []
+    for article in article_list:
+        text_set.append(article['text']) #this throws up an error message for some reason... still works
+    return apiResponse(list(text_set))
 
 def apiResponse(data):
     headers = [["Access-Control-Allow-Origin", "*"]]
@@ -110,13 +96,6 @@ def api_keywords():
     for article in article_list:
         keyword_set.update(article['keywords'])
     return apiResponse(list(keyword_set))
-
-# @app.route('/api/search?q=<search_term>') #?q=<search_term>
-# def api_wordcount(search_term):
-#         #
-#         # something here
-#         #
-#     return json.dumps(list(search_set))
 
 # @app.route("/")
 # def jsonnify():
