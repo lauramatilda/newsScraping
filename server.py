@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from flask import Flask, render_template, request
 from pymongo import MongoClient
@@ -14,7 +15,7 @@ class JSONEncoder(json.JSONEncoder):
             return o.isoformat()
         return json.JSONEncoder.default(self, o)
 
-MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
+MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news') 
 
 client = MongoClient(MONGODB_URL) #previously ('localhost', 27017)
 db = client.get_default_database()
@@ -62,7 +63,7 @@ def article_detail(article_id):
 
 @app.route('/api')
 def api_index():
-    possible_urls = ['/api/fulltext', '/api/keywords']
+    possible_urls = ['/api/fulltext', '/api/keywords', '/api/test']
     return json.dumps(possible_urls)
 
 @app.route('/api/fulltext')
@@ -73,6 +74,25 @@ def api_fulltext():
         query['publication'] = publication
     article_list = articles.find(query)[:50]
     return apiResponse(list(article_list)) #json.dumps(list(article_list), cls=JSONEncoder)
+
+@app.route('/api/<pubName>/<year>/<month>')
+def api_query(pubName, year, month):
+    start = datetime(int(year), int(month), 1)
+    end = start + relativedelta(months=1)
+    article_list = articles.find({
+    'publication': pubName,
+    'date': {"$gte" : start, "$lt": end}
+    })[:150]
+    return apiResponse(list(article_list))
+
+    #THIS WORKS DON'T BREAK IT
+    # @app.route('/api/test')
+    # def api_query():
+    #     article_list = articles.find({
+    #     'publication':'guardian',
+    #     'date': {"$gte" : datetime(2015, 3, 1), "$lt": datetime(2015, 3, 30)}
+    #     })[:50]
+    #     return apiResponse(list(article_list))
 
 def apiResponse(data):
     headers = [["Access-Control-Allow-Origin", "*"]]
