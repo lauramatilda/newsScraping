@@ -74,7 +74,7 @@ def api_query(pubName, year, month):
     article_list = articles.find({
     'publication': pubName,
     'date': {"$gte" : start, "$lt": end}
-    })[:700] #Have to limit due to slow server response
+    })[:500] #Have to limit due to slow server response
     text_set = []
     for article in article_list:
         text_set.append(article['text']) #this throws up an error message for some reason... still works
