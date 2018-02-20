@@ -22,6 +22,7 @@ db = client.get_default_database() #previously db = client.news
 articles = db.articles
 
 app = Flask(__name__)
+app.config['DEBUG'] = False
 
 @app.route("/")
 def index():
@@ -31,6 +32,9 @@ def index():
     })[:50]
     return render_template('article_list.html', articles=article_list)
 
+@app.errorhandler(500)
+def page_not_found(error):
+    return 'This page does not exist', 500
 
 @app.route("/fetched")
 def article_list_fetched():
@@ -73,11 +77,12 @@ def api_query(pubName, year, month):
     end = start + relativedelta(months=1)
     article_list = articles.find({
     'publication': pubName,
+    'text': {"$exists": 1},
     'date': {"$gte" : start, "$lt": end}
     })[:500] #Have to limit due to slow server response
     text_set = []
     for article in article_list:
-        text_set.append(article['text']) #this throws up an error message for some reason... still works
+        text_set.append(article['text'])
     return apiResponse(list(text_set))
 
 def apiResponse(data):
