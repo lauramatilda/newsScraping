@@ -79,7 +79,7 @@ def api_query(pubName, year, month):
     'publication': pubName,
     'text': {"$exists": 1},
     'date': {"$gte" : start, "$lt": end}
-    })[:500] #Have to limit due to slow server response
+    })[:250] #Have to limit due to slow server response
     text_set = []
     for article in article_list:
         text_set.append(article['text'])
