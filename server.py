@@ -17,9 +17,9 @@ class JSONEncoder(json.JSONEncoder):
 
 MONGODB_URL = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/news')
 
-client = MongoClient(MONGODB_URL) #previously ('localhost', 27017)
-db = client.get_default_database() #previously db = client.news
-articles = db.articles
+client = MongoClient(MONGODB_URL)
+db = client.news
+articles = db.keywords #previously db.articles
 
 app = Flask(__name__)
 app.config['DEBUG'] = False
@@ -62,28 +62,75 @@ def api_index():
     possible_urls = ['/api/fulltext', '/api/keywords', '/api/test']
     return json.dumps(possible_urls)
 
-@app.route('/api/fulltext')
-def api_fulltext():
-    query = {}
-    publication = request.args.get('publication')
-    if publication is not None:
-        query['publication'] = publication
-    article_list = articles.find(query)[:50]
-    return apiResponse(list(article_list)) #json.dumps(list(article_list), cls=JSONEncoder)
+# @app.route('/api/fulltext')
+# def api_fulltext():
+#     query = {}
+#     publication = request.args.get('publication')
+#     if publication is not None:
+#         query['publication'] = publication
+#     article_list = articles.find(query)[:50]
+#     return apiResponse(list(article_list)) #json.dumps(list(article_list), cls=JSONEncoder)
 
-@app.route('/api/<pubName>/<year>/<month>')
-def api_query(pubName, year, month):
-    start = datetime(int(year), int(month), 1)
-    end = start + relativedelta(months=1)
-    article_list = articles.find({
-    'publication': pubName,
-    'text': {"$exists": 1},
-    'date': {"$gte" : start, "$lt": end}
-    })[:250] #Have to limit due to slow server response
-    text_set = []
-    for article in article_list:
-        text_set.append(article['text'])
-    return apiResponse(list(text_set))
+# @app.route('/api/<pubName>/<year>/<month>')
+# def api_query(pubName, year, month):
+#     start = datetime(int(year), int(month), 1)
+#     end = start + relativedelta(months=1)
+#     article_list = articles.find({
+#     'publication': pubName,
+#     'text': {"$exists": 1},
+#     'date': {"$gte" : start, "$lt": end}
+#     })[:250] #Have to limit due to slow server response
+#     text_set = []
+#     for article in article_list:
+#         text_set.append(article['text'])
+#     return apiResponse(list(text_set))
+
+
+@app.route('/api/<year>/<var1>/<var2>/<var3>/')
+def api_powerQuery(year, var1, var2, var3):
+    #throttle = 100 #sample size, ideally eliminated and all included
+    publications = ["daily_mail", "guardian", "telegraph"]
+    fullArray, pubArray, monthArray = ([] for i in range(3))
+    counter = 0
+
+    for publication in publications:
+        pubArray.append(publication)
+        for month in range(1, 13):
+            monthArray = []
+            start = datetime(int(year), month, 1)
+            end = start + relativedelta(months=1)
+            # article_list = articles.find({'publication': publication,'date': {"$gte" : start, "$lt": end}})[:throttle]
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$in": [ var1 ]}},{'keywords': {"$in": [ var2 ]}},{'keywords': {"$in": [ var3 ]}}] } )
+            monthArray.append(counter) # A & B & C
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$in": [ var1 ]}},{'keywords': {"$in": [ var2 ]}},{'keywords': {"$nin": [ var3 ]}}] } )
+            monthArray.append(counter) # A & B
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$in": [ var1 ]}},{'keywords': {"$nin": [ var2 ]}},{'keywords': {"$in": [ var3 ]}}] } )
+            monthArray.append(counter) # A & C
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$in": [ var1 ]}},{'keywords': {"$nin": [ var2 ]}},{'keywords': {"$nin": [ var3 ]}}] } )
+            monthArray.append(counter) # A
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$nin": [ var1 ]}},{'keywords': {"$in": [ var2 ]}},{'keywords': {"$in": [ var3 ]}}] } )
+            monthArray.append(counter) # B & C
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$nin": [ var1 ]}},{'keywords': {"$in": [ var2 ]}},{'keywords': {"$nin": [ var3 ]}}] } )
+            monthArray.append(counter) # B
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$nin": [ var1 ]}},{'keywords': {"$nin": [ var2 ]}},{'keywords': {"$in": [ var3 ]}}] } )
+            monthArray.append(counter) # C
+
+            counter = articles.count( { "$and": [{'publication': publication}, {'date': {"$gte" : start, "$lt": end}},{'keywords': {"$nin": [ var1 ]}},{'keywords': {"$nin": [ var2 ]}},{'keywords': {"$nin": [ var3 ]}}] } )
+            monthArray.append(counter) # NONE
+
+            pubArray.append(monthArray)
+
+    fullArray.append(pubArray)
+
+    return apiResponse(list(fullArray))
+
 
 def apiResponse(data):
     headers = [["Access-Control-Allow-Origin", "*"]]
@@ -92,9 +139,9 @@ def apiResponse(data):
 @app.route('/api/keywords')
 def api_keywords():
     query = {}
-    publication = request.args.get('publication')
-    if publication is not None:
-        query['publication'] = publication
+    # publication = request.args.get('publication')
+    # if publication is not None:
+    #     query['publication'] = publication
     query['keywords'] = {'$exists': 1}
     article_list = articles.find(query)[:50]
     keyword_set = set()
